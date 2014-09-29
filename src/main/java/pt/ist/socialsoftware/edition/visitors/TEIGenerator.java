@@ -1,9 +1,9 @@
-package pt.ist.socialsoftware.edition.generators;
+package pt.ist.socialsoftware.edition.visitors;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Attribute;
@@ -24,7 +24,6 @@ import pt.ist.socialsoftware.edition.domain.ManuscriptSource;
 import pt.ist.socialsoftware.edition.domain.Source;
 import pt.ist.socialsoftware.edition.domain.SourceInter;
 import pt.ist.socialsoftware.edition.domain.Surface;
-import pt.ist.socialsoftware.edition.generators.visitors.TEITextPortionWriter;
 
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
@@ -35,7 +34,7 @@ public class TEIGenerator {
 	// Element rootElement = null;
 
 	TEITextPortionWriter writer = null;
-	List<FragInter> fragInterSelectedSet;
+	Set<FragInter> fragInterSelectedSet;
 
 	Namespace xmlns;
 
@@ -45,7 +44,7 @@ public class TEIGenerator {
 		xmlns = Namespace.getNamespace("http://www.tei-c.org/ns/1.0");
 	}
 
-	public void generate(Map<Fragment, List<FragInter>> fragmentMap) {
+	public void generate(Map<Fragment, Set<FragInter>> fragmentMap) {
 		// TODO Auto-generated method stub
 
 		Element rootElement = generateCorpus();
@@ -53,8 +52,7 @@ public class TEIGenerator {
 
 		Fragment fragment;
 
-		for (Map.Entry<Fragment, List<FragInter>> entry : fragmentMap
-				.entrySet()) {
+		for (Map.Entry<Fragment, Set<FragInter>> entry : fragmentMap.entrySet()) {
 
 			fragment = entry.getKey();
 			fragInterSelectedSet = entry.getValue();
@@ -103,7 +101,7 @@ public class TEIGenerator {
 	}
 
 	private void generateFragment(Element rootElement, Fragment fragment,
-			List<FragInter> fragInterSelectedSet) {
+			Set<FragInter> fragInterSelectedSet) {
 
 		// Namespace xmlns = Namespace.XML_NAMESPACE;
 		// .getNamespace("http://www.tei-c.org/ns/1.0");
@@ -596,7 +594,7 @@ public class TEIGenerator {
 	}
 
 	private void generateTranscription(Element parentElement,
-			Fragment fragment, List<FragInter> fragInterSelectedSet) {
+			Fragment fragment, Set<FragInter> fragInterSelectedSet) {
 
 		Element textElement = new Element("text", xmlns);
 		parentElement.addContent(textElement);

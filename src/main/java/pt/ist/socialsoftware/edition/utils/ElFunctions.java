@@ -3,8 +3,8 @@ package pt.ist.socialsoftware.edition.utils;
 import pt.ist.socialsoftware.edition.domain.ExpertEditionInter;
 import pt.ist.socialsoftware.edition.domain.FragInter;
 import pt.ist.socialsoftware.edition.domain.Fragment;
-import pt.ist.socialsoftware.edition.generators.visitors.HtmlWriter2CompInters;
-import pt.ist.socialsoftware.edition.generators.visitors.HtmlWriter4OneInter;
+import pt.ist.socialsoftware.edition.visitors.HtmlWriter2CompInters;
+import pt.ist.socialsoftware.edition.visitors.HtmlWriter4OneInter;
 
 public class ElFunctions {
 

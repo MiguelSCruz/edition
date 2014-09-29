@@ -1,9 +1,9 @@
 /**
  * 
  */
-package pt.ist.socialsoftware.edition.generators.visitors;
+package pt.ist.socialsoftware.edition.visitors;
 
-import java.util.List;
+import java.util.Set;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
@@ -58,7 +58,7 @@ public class TEITextPortionWriter implements TextTreeVisitor {
 	// List<String> fragInterSelectedSet = new ArrayList<String>();
 
 	Element rootElement = null;
-	List<FragInter> fragInterSelectedSet = null;
+	Set<FragInter> fragInterSelectedList = null;
 
 	// jdomDoc.setRootElement(rootElement);
 
@@ -68,10 +68,10 @@ public class TEITextPortionWriter implements TextTreeVisitor {
 	}
 
 	public TEITextPortionWriter(Element rootElement,
-			List<FragInter> fragInterSelectedSet) {
+			Set<FragInter> fragInterSelectedList) {
 		// TODO Auto-generated constructor stub
 		this.rootElement = rootElement;
-		this.fragInterSelectedSet = fragInterSelectedSet;
+		this.fragInterSelectedList = fragInterSelectedList;
 	}
 
 	private Element preGenerate(String name) {
@@ -139,7 +139,7 @@ public class TEITextPortionWriter implements TextTreeVisitor {
 
 		for (FragInter inter : rdgText.getInterps()) {
 
-			if (fragInterSelectedSet.contains(inter)) {
+			if (fragInterSelectedList.contains(inter)) {
 				selected = true;
 				wit = wit + "#" + inter.getXmlId() + " ";
 			}
@@ -244,7 +244,7 @@ public class TEITextPortionWriter implements TextTreeVisitor {
 		boolean selected = false;
 
 		for (FragInter inter : lbText.getInterps()) {
-			if (fragInterSelectedSet.contains(inter)) {
+			if (fragInterSelectedList.contains(inter)) {
 				ed = ed + "#" + inter.getXmlId() + " ";
 				selected = true;
 			}
@@ -291,7 +291,7 @@ public class TEITextPortionWriter implements TextTreeVisitor {
 		boolean selected = false;
 
 		for (FragInter inter : pbText.getInterps()) {
-			if (fragInterSelectedSet.contains(inter)) {
+			if (fragInterSelectedList.contains(inter)) {
 				ed = ed + "#" + inter.getXmlId() + " ";
 				selected = true;
 			}

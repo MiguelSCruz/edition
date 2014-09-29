@@ -1,4 +1,4 @@
-package pt.ist.socialsoftware.edition.generators.visitors;
+package pt.ist.socialsoftware.edition.visitors;
 
 import java.util.ArrayList;
 import java.util.HashMap;

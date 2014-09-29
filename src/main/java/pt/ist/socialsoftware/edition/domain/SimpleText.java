@@ -1,6 +1,6 @@
 package pt.ist.socialsoftware.edition.domain;
 
-import pt.ist.socialsoftware.edition.generators.visitors.TextTreeVisitor;
+import pt.ist.socialsoftware.edition.visitors.TextTreeVisitor;
 
 /**
  * Contains the simple text, no line or pages breaks, spaces, formating, etc

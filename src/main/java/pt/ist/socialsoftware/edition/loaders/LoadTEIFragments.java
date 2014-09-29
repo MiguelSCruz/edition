@@ -78,7 +78,6 @@ import pt.ist.socialsoftware.edition.domain.TextPortion.VariationType;
 import pt.ist.socialsoftware.edition.domain.TypeNote;
 import pt.ist.socialsoftware.edition.domain.UnclearText;
 import pt.ist.socialsoftware.edition.domain.UnclearText.UnclearReason;
-import pt.ist.socialsoftware.edition.generators.visitors.TEITrancriptionWriter;
 import pt.ist.socialsoftware.edition.shared.exception.LdoDLoadException;
 import pt.ist.socialsoftware.edition.utils.DateUtils;
 
@@ -312,9 +311,9 @@ public class LoadTEIFragments {
 		loadFragmentText(fragment, xmlId);
 
 		// uncomment when a print of the result of load is required in stdout
-		 TEITrancriptionWriter writer = new TEITrancriptionWriter();
-		 writer.visit((AppText) fragment.getTextPortion());
-		 System.out.println(writer.getResult());
+		// TEIWriter writer = new TEIWriter();
+		// writer.visit((AppText) fragment.getTextPortion());
+		// System.out.println(writer.getResult());
 	}
 
 	private void loadFragmentText(Fragment fragment, String fragmentXmlID) {

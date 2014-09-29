@@ -4,10 +4,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,10 +25,10 @@ import pt.ist.socialsoftware.edition.domain.Edition.EditionType;
 import pt.ist.socialsoftware.edition.domain.FragInter;
 import pt.ist.socialsoftware.edition.domain.Fragment;
 import pt.ist.socialsoftware.edition.domain.LdoD;
-import pt.ist.socialsoftware.edition.generators.TEIGenerator;
 import pt.ist.socialsoftware.edition.loaders.LoadTEICorpus;
 import pt.ist.socialsoftware.edition.loaders.LoadTEIFragments;
 import pt.ist.socialsoftware.edition.shared.exception.LdoDLoadException;
+import pt.ist.socialsoftware.edition.visitors.TEIGenerator;
 
 //temp
 
@@ -159,7 +159,7 @@ public class AdminController {
 		return "admin/deleteFragment";
 
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST, value = "/fragment/deleteAll")
 	@PreAuthorize("hasRole('ADMIN')")
 	public String deleteAllFragments(Model model) {
@@ -171,7 +171,7 @@ public class AdminController {
 		return "admin/deleteFragment";
 
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET, value = "/user/create")
 	@PreAuthorize("hasRole('ADMIN')")
 	public String createUsers(Model model) throws FileNotFoundException,
@@ -191,22 +191,22 @@ public class AdminController {
 
 		LdoD ldoD = LdoD.getInstance();
 
-		Map searchResult = new HashMap();
+		Map<Fragment, Set<FragInter>> searchResult = new HashMap<Fragment, Set<FragInter>>();
 
 		for (Fragment frag : ldoD.getFragmentsSet()) {
 			if (frag.getTitle()
 					.compareTo(
 							"Tenho deante de mim as duas paginas grandes do livro pesado;") == 0) {
 
-				List<FragInter> list = new ArrayList<FragInter>();
+				Set<FragInter> inters = new HashSet<FragInter>();
 
 				for (FragInter inter : frag.getFragmentInterSet()) {
 					if (inter.getSourceType() != EditionType.VIRTUAL) {
 
-						list.add(inter);
+						inters.add(inter);
 					}
 				}
-				searchResult.put(frag, list);
+				searchResult.put(frag, inters);
 			}
 		}
 
@@ -236,21 +236,21 @@ public class AdminController {
 
 		LdoD ldoD = LdoD.getInstance();
 
-		Map searchResult = new HashMap();
+		Map<Fragment, Set<FragInter>> searchResult = new HashMap<Fragment, Set<FragInter>>();
 
 		int i = 0;
 
 		for (Fragment frag : ldoD.getFragmentsSet()) {
 
-			List<FragInter> l = new ArrayList<FragInter>();
+			Set<FragInter> inters = new HashSet<FragInter>();
 
 			for (FragInter inter : frag.getFragmentInterSet()) {
 				if (inter.getSourceType() != EditionType.VIRTUAL) {
 
-					l.add(inter);
+					inters.add(inter);
 				}
 			}
-			searchResult.put(frag, l);
+			searchResult.put(frag, inters);
 
 			i++;
 			if (i == 2)
@@ -263,4 +263,5 @@ public class AdminController {
 		model.addAttribute("generator", teiGenerator);
 		return "admin/generatedTEI";
 	}
+
 }

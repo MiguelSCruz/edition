@@ -9,8 +9,8 @@ import org.apache.commons.io.FileUtils;
 
 import pt.ist.socialsoftware.edition.domain.Edition;
 import pt.ist.socialsoftware.edition.domain.FragInter;
-import pt.ist.socialsoftware.edition.generators.visitors.TextFragmentWriter;
 import pt.ist.socialsoftware.edition.utils.PropertiesManager;
+import pt.ist.socialsoftware.edition.visitors.TextFragmentWriter;
 
 public class CorpusGenerator {
 

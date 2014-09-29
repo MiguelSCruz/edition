@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import pt.ist.socialsoftware.edition.generators.visitors.TextTreeVisitor;
+import pt.ist.socialsoftware.edition.visitors.TextTreeVisitor;
 
 public class RdgText extends RdgText_Base implements GraphElement {
 
