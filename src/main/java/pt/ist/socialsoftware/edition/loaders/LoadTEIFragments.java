@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,6 +40,7 @@ import pt.ist.socialsoftware.edition.domain.ExpertEditionInter;
 import pt.ist.socialsoftware.edition.domain.Facsimile;
 import pt.ist.socialsoftware.edition.domain.FragInter;
 import pt.ist.socialsoftware.edition.domain.Fragment;
+import pt.ist.socialsoftware.edition.domain.Fragment.PrecisionType;
 import pt.ist.socialsoftware.edition.domain.GapText;
 import pt.ist.socialsoftware.edition.domain.GapText.GapReason;
 import pt.ist.socialsoftware.edition.domain.GapText.GapUnit;
@@ -50,6 +52,7 @@ import pt.ist.socialsoftware.edition.domain.ManuscriptSource;
 import pt.ist.socialsoftware.edition.domain.ManuscriptSource.Medium;
 import pt.ist.socialsoftware.edition.domain.NoteText;
 import pt.ist.socialsoftware.edition.domain.NoteText.NoteType;
+import pt.ist.socialsoftware.edition.domain.NullHeteronym;
 import pt.ist.socialsoftware.edition.domain.ParagraphText;
 import pt.ist.socialsoftware.edition.domain.PbText;
 import pt.ist.socialsoftware.edition.domain.PhysNote;
@@ -87,6 +90,9 @@ public class LoadTEIFragments {
 
 	private Document doc = null;
 
+	// to define an order among page breaks
+	private int pbOrder = 0;
+
 	private final Map<String, List<Object>> directIdMap = new HashMap<String, List<Object>>();
 
 	private void putObjectDirectIdMap(String xmlID, Object object) {
@@ -122,7 +128,13 @@ public class LoadTEIFragments {
 		List<Object> objects = getObjectDirectIdsMap(listInterXmlId);
 		Set<FragInter> fragIters = new HashSet<FragInter>();
 		for (Object object : objects) {
-			fragIters.add((FragInter) object);
+			try {
+				fragIters.add((FragInter) object);
+			} catch (ClassCastException ex) {
+				throw new LdoDLoadException(
+						"um dos identificadores desta lista não é um identificador válido de witness: "
+								+ Arrays.toString(listInterXmlId));
+			}
 		}
 		return fragIters;
 	}
@@ -239,8 +251,10 @@ public class LoadTEIFragments {
 		return message;
 	}
 
-	public void loadFragmentsStepByStep(InputStream file)
+	public String loadFragmentsStepByStep(InputStream file)
 			throws LdoDLoadException {
+		String result = null;
+
 		parseTEIFile(file);
 
 		XPathExpression<Element> xp = xpfac.compile("//def:TEI/def:teiHeader",
@@ -253,18 +267,28 @@ public class LoadTEIFragments {
 			String xmlId = getFragmentXmlId(element);
 			String title = getFragmentTitle(element);
 
+			result = "CARREGAR: [" + xmlId + "(" + title + ")] <br>";
+
 			Boolean exists = false;
 			for (Fragment frag : ldoD.getFragmentsSet()) {
 				if (frag.getXmlId().equals(xmlId)) {
+					result = result
+							+ "------------> FRAG-ID JÁ EXISTE LOGO NÃO FOI CARREGADO <br>";
 					exists = true;
 					break;
 				}
 			}
 
 			if (!exists) {
-				atomicLoadFragment(title, xmlId);
+				try {
+					atomicLoadFragment(title, xmlId);
+				} catch (LdoDLoadException e) {
+					throw new LdoDLoadException("[" + title + "(" + xmlId
+							+ ")]: " + e.getMessage());
+				}
 			}
 		}
+		return result;
 	}
 
 	@Atomic(mode = TxMode.WRITE)
@@ -435,8 +459,13 @@ public class LoadTEIFragments {
 
 		List<SegText> segTextList = new ArrayList<SegText>();
 		for (String xmlId : targetList) {
-			SegText segText = (SegText) getObjectDirectIdMap(xmlId.substring(1))
-					.get(0);
+			List<Object> listSegTextList = getObjectDirectIdMap(xmlId
+					.substring(1));
+			if (listSegTextList == null)
+				throw new LdoDLoadException(
+						"Não está declarado xml:id associado a um identicador target do elemento alt. Valor="
+								+ xmlId.substring(1));
+			SegText segText = (SegText) listSegTextList.get(0);
 			if (segText == null) {
 				throw new LdoDLoadException(
 						"Não há elemento seg associado a um identicador target do elemento alt. Valor="
@@ -553,6 +582,8 @@ public class LoadTEIFragments {
 					loadUnclear(element2, delText);
 				} else if (element2.getName().equals("note")) {
 					loadNote(element2, parent);
+				} else if (element2.getName().equals("space")) {
+					loadSpace(element2, delText);
 				} else {
 					throw new LdoDLoadException("não carrega elementos: "
 							+ element2 + " do tipo:" + element2.getName()
@@ -721,7 +752,7 @@ public class LoadTEIFragments {
 			}
 		}
 
-		PbText pbText = new PbText(parent, toFragInters);
+		PbText pbText = new PbText(parent, toFragInters, pbOrder++);
 
 		Attribute facsAttribute = element.getAttribute("facs");
 		if (facsAttribute != null) {
@@ -757,8 +788,9 @@ public class LoadTEIFragments {
 		if (edAttribute == null) {
 			toFragInters = parent.getInterps();
 		} else {
-			String[] listInterXmlId = element.getAttribute("ed").getValue()
-					.split("\\s+");
+			String xmlsString = element.getAttribute("ed").getValue().trim();
+			String[] listInterXmlId = xmlsString.split("\\s+");
+
 			toFragInters = getFragItersByListXmlID(listInterXmlId);
 
 			for (FragInter inter : toFragInters) {
@@ -836,12 +868,18 @@ public class LoadTEIFragments {
 			List<Object> list = getObjectDirectIdMap(sourceID);
 
 			if (list == null) {
-				throw new LdoDLoadException("referência=" + sourceID
+				throw new LdoDLoadException("Referência=" + sourceID
 						+ " para testemunho fonte em facsimilexml:id=" + xmlID
 						+ " não existe");
 			}
 
 			Source source = (Source) list.get(0);
+
+			if (source.getFacsimile() != null) {
+				throw new LdoDLoadException(
+						"Existe mais do que um fac-símile para a fonte com referência="
+								+ sourceID);
+			}
 
 			Facsimile facsimile = new Facsimile(source, xmlID);
 
@@ -969,6 +1007,8 @@ public class LoadTEIFragments {
 				Heteronym heteronym = getHeteronym(bibl);
 				if (heteronym != null)
 					fragInter.setHeteronym(heteronym);
+				else
+					fragInter.setHeteronym(NullHeteronym.getNullHeteronym());
 
 				Element titleElement = bibl.getChild("title", namespace);
 				if ((titleElement != null)
@@ -985,13 +1025,19 @@ public class LoadTEIFragments {
 					} else {
 						fragInter.setDate(DateUtils.convertDate(whenAttribute
 								.getValue()));
+
+						PrecisionType precision = getPrecisionAttribute(dateElement);
+						if (precision != null) {
+							fragInter.setPrecision(precision);
+						}
 					}
 				}
 
 				setBiblScopes(fragInter, bibl);
 
 				setNotes(fragInter, bibl);
-			}
+			} else
+				fragInter.setHeteronym(NullHeteronym.getNullHeteronym());
 
 			fragInter.setXmlId(witnessXmlID);
 
@@ -1007,6 +1053,8 @@ public class LoadTEIFragments {
 		List<Element> notesList = bibl.getChildren("note", namespace);
 		for (Element noteElement : notesList) {
 			String typeValue = noteElement.getAttributeValue("type");
+			if (typeValue == null)
+				throw new LdoDLoadException("elemento note sem atributo type");
 			if (typeValue.equals("physDesc")) {
 				notes = notes + noteElement.getTextTrim() + ";";
 			} else if (typeValue.equals("annex")) {
@@ -1156,7 +1204,7 @@ public class LoadTEIFragments {
 								+ bibl.getValue());
 			}
 		} else {
-			heteronym = null;
+			heteronym = NullHeteronym.getNullHeteronym();
 		}
 		return heteronym;
 	}
@@ -1192,14 +1240,19 @@ public class LoadTEIFragments {
 			printedSource.setPubPlace(bibl.getChildText("pubPlace", namespace));
 			printedSource.setIssue(bibl.getChildText("biblScope", namespace));
 
-			Attribute whenAttribute = bibl.getChild("date", namespace)
-					.getAttribute("when");
+			Element dateElement = bibl.getChild("date", namespace);
+			Attribute whenAttribute = dateElement.getAttribute("when");
 
 			if (whenAttribute == null) {
 				printedSource.setDate(null);
 			} else {
 				printedSource.setDate(DateUtils.convertDate(whenAttribute
 						.getValue()));
+
+				PrecisionType precision = getPrecisionAttribute(dateElement);
+				if (precision != null) {
+					printedSource.setPrecision(precision);
+				}
 			}
 		}
 
@@ -1259,6 +1312,12 @@ public class LoadTEIFragments {
 					} else {
 						manuscript.setDate(DateUtils.convertDate(when
 								.getValue()));
+
+						PrecisionType precision = getPrecisionAttribute(origDate);
+						if (precision != null) {
+							manuscript.setPrecision(precision);
+						}
+
 					}
 				}
 			}
@@ -1408,6 +1467,28 @@ public class LoadTEIFragments {
 
 	}
 
+	private PrecisionType getPrecisionAttribute(Element date) {
+		Attribute precisionAttribute = date.getAttribute("precision");
+		if (precisionAttribute != null) {
+			switch (precisionAttribute.getValue()) {
+			case ("high"):
+				return PrecisionType.HIGH;
+			case ("medium"):
+				return PrecisionType.MEDIUM;
+			case ("low"):
+				return PrecisionType.LOW;
+			case ("unknown"):
+				return PrecisionType.UNKNOWN;
+			default:
+				throw new LdoDLoadException(
+						"valor inesperado para atribute precison="
+								+ precisionAttribute.getValue());
+			}
+		} else {
+			return null;
+		}
+	}
+
 	private RefType getRefType(Element element) {
 		RefType type = null;
 
@@ -1441,6 +1522,10 @@ public class LoadTEIFragments {
 		if (typeAttribute != null) {
 			typeValue = typeAttribute.getValue();
 		}
+
+		if (typeValue == null)
+			throw new LdoDLoadException(
+					"elemento note não possui atributo type");
 
 		switch (typeValue) {
 		case "annex":

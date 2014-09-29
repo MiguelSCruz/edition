@@ -7,7 +7,7 @@ dist
 doc
 test-db
 commands
-src/main/config/build.properties
+src/main/resources/configuration.properties
 
 *.class
 /target/
