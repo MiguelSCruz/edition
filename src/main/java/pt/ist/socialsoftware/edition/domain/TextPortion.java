@@ -3,7 +3,7 @@ package pt.ist.socialsoftware.edition.domain;
 import java.util.List;
 import java.util.Set;
 
-import pt.ist.socialsoftware.edition.visitors.TextTreeVisitor;
+import pt.ist.socialsoftware.edition.generators.visitors.TextTreeVisitor;
 
 public abstract class TextPortion extends TextPortion_Base implements
 		GraphElement {

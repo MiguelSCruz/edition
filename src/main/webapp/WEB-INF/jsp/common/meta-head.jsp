@@ -6,6 +6,7 @@
 <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
 <link rel="stylesheet" type="text/css" href="/static/css/annotator.min.css" />
 <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+<script type="text/javascript" src="/static/js/FileSaver.js"></script>
 <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/static/js/annotator-full.min.js"></script>
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />

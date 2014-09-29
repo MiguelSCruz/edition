@@ -33,13 +33,13 @@ import pt.ist.socialsoftware.edition.domain.SourceInter;
 import pt.ist.socialsoftware.edition.domain.Surface;
 import pt.ist.socialsoftware.edition.domain.TextPortion;
 import pt.ist.socialsoftware.edition.domain.VirtualEdition;
+import pt.ist.socialsoftware.edition.generators.visitors.HtmlWriter2CompInters;
+import pt.ist.socialsoftware.edition.generators.visitors.HtmlWriter4OneInter;
+import pt.ist.socialsoftware.edition.generators.visitors.HtmlWriter4Variations;
 import pt.ist.socialsoftware.edition.security.LdoDSession;
 import pt.ist.socialsoftware.edition.shared.exception.LdoDException;
 import pt.ist.socialsoftware.edition.utils.AnnotationJson;
 import pt.ist.socialsoftware.edition.utils.AnnotationSearchJson;
-import pt.ist.socialsoftware.edition.visitors.HtmlWriter2CompInters;
-import pt.ist.socialsoftware.edition.visitors.HtmlWriter4OneInter;
-import pt.ist.socialsoftware.edition.visitors.HtmlWriter4Variations;
 
 @Controller
 @SessionAttributes({ "ldoDSession" })

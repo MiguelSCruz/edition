@@ -1,7 +1,7 @@
 /**
  * 
  */
-package pt.ist.socialsoftware.edition.visitors;
+package pt.ist.socialsoftware.edition.generators.visitors;
 
 import pt.ist.socialsoftware.edition.domain.AddText;
 import pt.ist.socialsoftware.edition.domain.AddText.Place;
@@ -33,7 +33,7 @@ import pt.ist.socialsoftware.edition.domain.UnclearText;
  * @author ars
  * 
  */
-public class TEIWriter implements TextTreeVisitor {
+public class TEITrancriptionWriter implements TextTreeVisitor {
 
 	private String result = "";
 

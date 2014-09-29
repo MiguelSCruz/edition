@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import pt.ist.socialsoftware.edition.visitors.TextTreeVisitor;
+import pt.ist.socialsoftware.edition.generators.visitors.TextTreeVisitor;
 
 public class RdgGrpText extends RdgGrpText_Base {
 

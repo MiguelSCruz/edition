@@ -1,7 +1,17 @@
 package pt.ist.socialsoftware.edition.controller;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,11 +20,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import pt.ist.fenixframework.FenixFramework;
+import pt.ist.socialsoftware.edition.domain.Edition.EditionType;
+import pt.ist.socialsoftware.edition.domain.FragInter;
 import pt.ist.socialsoftware.edition.domain.Fragment;
 import pt.ist.socialsoftware.edition.domain.LdoD;
+import pt.ist.socialsoftware.edition.generators.TEIGenerator;
 import pt.ist.socialsoftware.edition.loaders.LoadTEICorpus;
 import pt.ist.socialsoftware.edition.loaders.LoadTEIFragments;
 import pt.ist.socialsoftware.edition.shared.exception.LdoDLoadException;
+
+//temp
 
 @Controller
 @RequestMapping("/admin")
@@ -131,4 +146,86 @@ public class AdminController {
 
 	}
 
+	@RequestMapping(method = RequestMethod.GET, value = "/exportForm")
+	public String exportForm(Model model) {
+		return "admin/exportForm";
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = "/downloadTei")
+	public void downloadTei(HttpServletResponse response) {
+
+		LdoD ldoD = LdoD.getInstance();
+
+		Map searchResult = new HashMap();
+
+		for (Fragment frag : ldoD.getFragmentsSet()) {
+			if (frag.getTitle()
+					.compareTo(
+							"Tenho deante de mim as duas paginas grandes do livro pesado;") == 0) {
+
+				List<FragInter> list = new ArrayList<FragInter>();
+
+				for (FragInter inter : frag.getFragmentInterSet()) {
+					if (inter.getSourceType() != EditionType.VIRTUAL) {
+
+						list.add(inter);
+					}
+				}
+				searchResult.put(frag, list);
+			}
+		}
+
+		TEIGenerator teiGenerator = new TEIGenerator();
+		teiGenerator.generate(searchResult);
+
+		try {
+			// get your file as InputStream
+			InputStream is = IOUtils.toInputStream(teiGenerator.getXMLResult(),
+					"UTF-8");
+			response.setHeader("Content-Disposition",
+					"attachment; filename=tei.xml");
+			response.setContentType("application/tei+xml");
+			IOUtils.copy(is, response.getOutputStream());
+			response.flushBuffer();
+		} catch (IOException ex) {
+			System.out
+					.println("Error writing file to output stream. Filename was '{}'");
+			throw new RuntimeException("IOError writing file to output stream");
+		}
+
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = "/export")
+	public String export(Model model) throws FileNotFoundException,
+			UnsupportedEncodingException {
+
+		LdoD ldoD = LdoD.getInstance();
+
+		Map searchResult = new HashMap();
+
+		int i = 0;
+
+		for (Fragment frag : ldoD.getFragmentsSet()) {
+
+			List<FragInter> l = new ArrayList<FragInter>();
+
+			for (FragInter inter : frag.getFragmentInterSet()) {
+				if (inter.getSourceType() != EditionType.VIRTUAL) {
+
+					l.add(inter);
+				}
+			}
+			searchResult.put(frag, l);
+
+			i++;
+			if (i == 2)
+				break;
+		}
+
+		TEIGenerator teiGenerator = new TEIGenerator();
+		teiGenerator.generate(searchResult);
+
+		model.addAttribute("generator", teiGenerator);
+		return "admin/generatedTEI";
+	}
 }

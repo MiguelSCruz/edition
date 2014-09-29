@@ -1,6 +1,6 @@
 package pt.ist.socialsoftware.edition.domain;
 
-import pt.ist.socialsoftware.edition.visitors.TextTreeVisitor;
+import pt.ist.socialsoftware.edition.generators.visitors.TextTreeVisitor;
 
 public class SubstText extends SubstText_Base {
 
