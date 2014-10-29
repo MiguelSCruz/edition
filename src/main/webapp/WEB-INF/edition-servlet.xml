@@ -102,6 +102,9 @@
 			authentication-success-handler-ref="ldoDAuthenticationSuccessHandler" />
 		<security:intercept-url pattern="/login"
 			access="permitAll" />
+		<!-- temp -->
+		<security:intercept-url pattern="/admin/tests"
+			access="permitAll" />
 		<security:intercept-url pattern="/favicon.ico"
 			access="permitAll" />
 		<security:intercept-url pattern="/virtualeditions/restricted/**"

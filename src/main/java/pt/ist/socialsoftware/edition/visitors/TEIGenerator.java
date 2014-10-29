@@ -21,6 +21,10 @@ import pt.ist.socialsoftware.edition.domain.Facsimile;
 import pt.ist.socialsoftware.edition.domain.FragInter;
 import pt.ist.socialsoftware.edition.domain.Fragment;
 import pt.ist.socialsoftware.edition.domain.ManuscriptSource;
+import pt.ist.socialsoftware.edition.domain.NullHeteronym;
+import pt.ist.socialsoftware.edition.domain.ParagraphText;
+import pt.ist.socialsoftware.edition.domain.PbText;
+import pt.ist.socialsoftware.edition.domain.RdgText;
 import pt.ist.socialsoftware.edition.domain.Source;
 import pt.ist.socialsoftware.edition.domain.SourceInter;
 import pt.ist.socialsoftware.edition.domain.Surface;
@@ -244,8 +248,10 @@ public class TEIGenerator {
 		Element layoutElement = null;
 
 		Element handDescElement = null;
+		Element pElement = null;
 		Element additionsElement = null;
 		Element bindingDescElement = null;
+		Element bindingElement = null;
 
 		Element historyElement = null;
 		Element originElement = null;
@@ -264,11 +270,9 @@ public class TEIGenerator {
 
 			msIdentifierElement = new Element("msIdentifier", xmlns);
 			physDescElement = new Element("physDesc", xmlns);
-			historyElement = new Element("history", xmlns);
 
 			msDescElement.addContent(msIdentifierElement);
 			msDescElement.addContent(physDescElement);
-			msDescElement.addContent(historyElement);
 
 			settlementElement = new Element("settlement", xmlns);
 			settlementElement.addContent(manuscript.getSettlement());
@@ -293,12 +297,12 @@ public class TEIGenerator {
 			// physDesc // TODO: strings
 			objectDescElement = new Element("objectDesc", xmlns);
 			objectDescElement.setAttribute("form", manuscript.getForm()
-					.toString());
+					.toString().toLowerCase());
 			physDescElement.addContent(objectDescElement);
 
 			supportDescElement = new Element("supportDesc", xmlns);
 			supportDescElement.setAttribute("material", manuscript
-					.getMaterial().name());
+					.getMaterial().name().toLowerCase());
 			objectDescElement.addContent(supportDescElement);
 
 			layoutDescElement = new Element("layoutDesc", xmlns);
@@ -310,33 +314,49 @@ public class TEIGenerator {
 			layoutDescElement.addContent(layoutElement);
 
 			handDescElement = new Element("handDesc", xmlns);
-			handDescElement.addContent(manuscript.getNotes());
-			objectDescElement.addContent(handDescElement);
+			physDescElement.addContent(handDescElement);
+
+			pElement = new Element("p", xmlns);
+			pElement.addContent(manuscript.getNotes());
+			handDescElement.addContent(pElement);
 
 			additionsElement = new Element("additions", xmlns);
-			objectDescElement.addContent(additionsElement);
+
+			if (manuscript.getHasLdoDLabel()) {
+				additionsElement.addContent("LdoD");
+			}
+			physDescElement.addContent(additionsElement);
 
 			bindingDescElement = new Element("bindingDesc", xmlns);
-			objectDescElement.addContent(bindingDescElement);
+			physDescElement.addContent(bindingDescElement);
 
-			historyElement = new Element("history", xmlns);
-			msDescElement.addContent(historyElement);
+			bindingElement = new Element("binding", xmlns);
+			bindingDescElement.addContent(bindingElement);
 
-			originElement = new Element("origin", xmlns);
-			historyElement.addContent(originElement);
+			pElement = new Element("p", xmlns);
+			pElement.addContent(manuscript.getNotes());
+			bindingElement.addContent(pElement);
 
-			// TODO: update date format; field precision
-			String date = "";
-			String precision = "";
+			if (manuscript.getDate() != null) {
+				historyElement = new Element("history", xmlns);
+				msDescElement.addContent(historyElement);
 
-			if (manuscript.getDate() != null)
-				date = manuscript.getDate().toString();
+				originElement = new Element("origin", xmlns);
+				historyElement.addContent(originElement);
 
-			origdateElement = new Element("origdate", xmlns);
-			origdateElement.setAttribute("date", date);
-			origdateElement.setAttribute("precision", precision);
-			origdateElement.addContent(date);
-			originElement.addContent(origdateElement);
+				// TODO: update date format; field precision
+				String date = manuscript.getDate().toString();
+
+				origdateElement = new Element("origDate", xmlns);
+				origdateElement.setAttribute("when", date);
+
+				if (manuscript.getPrecision() != null)
+					origdateElement.setAttribute("precision", manuscript
+							.getPrecision().getDesc());
+
+				origdateElement.addContent(date);
+				originElement.addContent(origdateElement);
+			}
 
 			listBibl2.addContent(msDescElement);
 
@@ -448,7 +468,7 @@ public class TEIGenerator {
 
 				expertEditionInter = (ExpertEditionInter) fragInter;
 
-				System.out.println("TITLE " + fragInter.getTitle());
+				// System.out.println("TITLE " + fragInter.getTitle());
 
 				witnessElement = new Element("witness", xmlns);
 				// witnessElement.addNamespaceDeclaration(Namespace.getNamespace(
@@ -467,8 +487,9 @@ public class TEIGenerator {
 				biblElement = new Element("bibl", xmlns);
 				witnessElement.addContent(biblElement);
 
-				// TODO heteronimo update? ; corresp
-				if (fragInter.getHeteronym() != null) {
+				// heteronimo nao declarado (!=null)
+				if (fragInter.getHeteronym().getName()
+						.compareTo(NullHeteronym.getNullHeteronym().getName()) != 0) {
 
 					respStmtElement = new Element("respStmt", xmlns);
 					biblElement.addContent(respStmtElement);
@@ -486,7 +507,7 @@ public class TEIGenerator {
 					if (name.compareTo("Bernardo Soares") == 0)
 						corresp = "BS";
 					else
-						corresp = "VS";
+						corresp = "VG";
 
 					persNameElement.setAttribute("corresp", "#HT." + corresp);
 					respStmtElement.addContent(persNameElement);
@@ -523,18 +544,27 @@ public class TEIGenerator {
 
 				if (expertEditionInter.getNotes().compareTo("") != 0) {
 					noteElement = new Element("note", xmlns);
+					noteElement.setAttribute("type", "physDesc");
 					noteElement.addContent(expertEditionInter.getNotes());
 					biblElement.addContent(noteElement);
 				}
 
-				String precision = "";
 				if (expertEditionInter.getDate() != null) {
+
+					// System.out.println("expereditiondate: "
+					// + expertEditionInter.getDate());
+
 					dateElement = new Element("date", xmlns);
 					dateElement.addContent(expertEditionInter.getDate()
 							.toString());
-					dateElement.setAttribute("date", expertEditionInter
+
+					dateElement.setAttribute("when", expertEditionInter
 							.getDate().toString());
-					dateElement.setAttribute("precision", precision);
+					//
+					// if (expertEditionInter.getPrecision() != null)
+					// dateElement.setAttribute("precision",
+					// expertEditionInter.getPrecision().getDesc());
+
 					biblElement.addContent(dateElement);
 				}
 
@@ -570,12 +600,19 @@ public class TEIGenerator {
 				+ facsimile.getSource().getXmlId());
 		facElement.setAttribute(corresp);
 
+		int i = 0;
+
 		for (Surface surface : facsimile.getSurfaces()) {
+			i++;
 			Element surfaceElement = new Element("surface", xmlns);
 			Element graphElement = new Element("graphic", xmlns);
 
 			Attribute graphAtt = new Attribute("url", surface.getGraphic());
 			graphElement.setAttribute(graphAtt);
+
+			Attribute idg = new Attribute("id", facsimile.getXmlId() + "-" + i,
+					Namespace.XML_NAMESPACE);
+			graphElement.setAttribute(idg);
 
 			surfaceElement.addContent(graphElement);
 			facElement.addContent(surfaceElement);
@@ -584,14 +621,15 @@ public class TEIGenerator {
 		fragElement.addContent(facElement);
 	}
 
-	private void generateTranscription(Fragment fragment, Element parentElement) {
-
-		Element textElement = new Element("text", xmlns);
-		parentElement.addContent(textElement);
-
-		writer = new TEITextPortionWriter(textElement);
-		writer.visit((AppText) fragment.getTextPortion());
-	}
+	// private void generateTranscription(Fragment fragment, Element
+	// parentElement) {
+	//
+	// Element textElement = new Element("text", xmlns);
+	// parentElement.addContent(textElement);
+	//
+	// writer = new TEITextPortionWriter(textElement);
+	// writer.visit((AppText) fragment.getTextPortion());
+	// }
 
 	private void generateTranscription(Element parentElement,
 			Fragment fragment, Set<FragInter> fragInterSelectedSet) {
@@ -599,8 +637,26 @@ public class TEIGenerator {
 		Element textElement = new Element("text", xmlns);
 		parentElement.addContent(textElement);
 
-		writer = new TEITextPortionWriter(textElement, fragInterSelectedSet);
-		writer.visit((AppText) fragment.getTextPortion());
+		Element bodyElement = new Element("body", xmlns);
+		textElement.addContent(bodyElement);
+
+		Element divElement = new Element("div", xmlns);
+		bodyElement.addContent(divElement);
+
+		Attribute iddiv = new Attribute("id", fragment.getXmlId() + ".TEXT",
+				Namespace.XML_NAMESPACE);
+		divElement.setAttribute(iddiv);
+
+		writer = new TEITextPortionWriter(divElement, fragInterSelectedSet);
+		// writer.visit((AppText) fragment.getTextPortion());
+		AppText app = (AppText) fragment.getTextPortion();
+		RdgText rdg = (RdgText) app.getFirstChildText();
+
+		if (rdg.getFirstChildText() instanceof ParagraphText)
+			writer.visit((ParagraphText) rdg.getFirstChildText());
+		else if (rdg.getFirstChildText() instanceof PbText)
+			writer.visit((PbText) rdg.getFirstChildText());
+
 	}
 
 	// TODO: to remove
@@ -643,7 +699,7 @@ public class TEIGenerator {
 		xml.setFormat(Format.getPrettyFormat());
 		String output = xml.outputString(jdomDoc);
 
-		output = updateTeiHeader(output);
+		// output = updateTeiHeader(output);
 		output = output.replace("<", "&lt;");
 		output = output.replace(">", "&gt;");
 
@@ -656,7 +712,7 @@ public class TEIGenerator {
 		// pretty formatting adds extra spaces and is generally not required.
 		xml.setFormat(Format.getPrettyFormat());
 		String output = xml.outputString(jdomDoc);
-		output = updateTeiHeader(output);
+		// output = updateTeiHeader(output);
 		return Base64.encode(output.getBytes());
 	}
 

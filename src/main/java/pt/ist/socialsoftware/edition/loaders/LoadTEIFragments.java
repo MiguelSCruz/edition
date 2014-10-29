@@ -1055,7 +1055,7 @@ public class LoadTEIFragments {
 			if (typeValue == null)
 				throw new LdoDLoadException("elemento note sem atributo type");
 			if (typeValue.equals("physDesc")) {
-				notes = notes + noteElement.getTextTrim() + ";";
+				notes = notes + noteElement.getTextTrim();
 			} else if (typeValue.equals("annex")) {
 				AnnexNote annexNote = new AnnexNote(fragInter);
 

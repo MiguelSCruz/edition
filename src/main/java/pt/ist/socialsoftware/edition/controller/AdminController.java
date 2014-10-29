@@ -4,8 +4,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,13 +24,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import pt.ist.fenixframework.FenixFramework;
+import pt.ist.socialsoftware.edition.domain.AppText;
 import pt.ist.socialsoftware.edition.domain.Edition.EditionType;
 import pt.ist.socialsoftware.edition.domain.FragInter;
 import pt.ist.socialsoftware.edition.domain.Fragment;
 import pt.ist.socialsoftware.edition.domain.LdoD;
+import pt.ist.socialsoftware.edition.domain.LdoDUser;
+import pt.ist.socialsoftware.edition.domain.TextPortion;
 import pt.ist.socialsoftware.edition.loaders.LoadTEICorpus;
 import pt.ist.socialsoftware.edition.loaders.LoadTEIFragments;
 import pt.ist.socialsoftware.edition.shared.exception.LdoDLoadException;
+import pt.ist.socialsoftware.edition.visitors.HtmlWriter2CompInters;
+import pt.ist.socialsoftware.edition.visitors.HtmlWriter4Variations;
 import pt.ist.socialsoftware.edition.visitors.TEIGenerator;
 
 //temp
@@ -194,20 +202,24 @@ public class AdminController {
 		Map<Fragment, Set<FragInter>> searchResult = new HashMap<Fragment, Set<FragInter>>();
 
 		for (Fragment frag : ldoD.getFragmentsSet()) {
-			if (frag.getTitle()
-					.compareTo(
-							"Tenho deante de mim as duas paginas grandes do livro pesado;") == 0) {
 
-				Set<FragInter> inters = new HashSet<FragInter>();
+			// if (frag.getTitle().compareTo("Sen.to Apocalyptico") == 0
+			// || frag.getTitle().compareTo("Prefiro a prosa ao verso") == 0
+			// || frag.getTitle().compareTo(
+			// "A habilidade em construir sonhos") == 0) {
 
-				for (FragInter inter : frag.getFragmentInterSet()) {
-					if (inter.getSourceType() != EditionType.VIRTUAL) {
+			// if (frag.getTitle().compareTo("A habilidade em construir sonhos")
+			// == 0) {
+			Set<FragInter> inters = new HashSet<FragInter>();
 
-						inters.add(inter);
-					}
+			for (FragInter inter : frag.getFragmentInterSet()) {
+				if (inter.getSourceType() != EditionType.VIRTUAL) {
+
+					inters.add(inter);
 				}
-				searchResult.put(frag, inters);
 			}
+			searchResult.put(frag, inters);
+			// }
 		}
 
 		TEIGenerator teiGenerator = new TEIGenerator();
@@ -242,19 +254,29 @@ public class AdminController {
 
 		for (Fragment frag : ldoD.getFragmentsSet()) {
 
-			Set<FragInter> inters = new HashSet<FragInter>();
+			/*
+			 * Set<FragInter> inters = new HashSet<FragInter>();
+			 * 
+			 * for (FragInter inter : frag.getFragmentInterSet()) { if
+			 * (inter.getSourceType() != EditionType.VIRTUAL) {
+			 * 
+			 * inters.add(inter); } } searchResult.put(frag, inters);
+			 * 
+			 * i++; if (i == 1) break;
+			 */
 
-			for (FragInter inter : frag.getFragmentInterSet()) {
-				if (inter.getSourceType() != EditionType.VIRTUAL) {
+			if (frag.getTitle().compareTo("Prefiro a prosa ao verso") == 0) {
 
-					inters.add(inter);
+				Set<FragInter> inters = new HashSet<FragInter>();
+
+				for (FragInter inter : frag.getFragmentInterSet()) {
+					if (inter.getSourceType() != EditionType.VIRTUAL) {
+
+						inters.add(inter);
+					}
 				}
+				searchResult.put(frag, inters);
 			}
-			searchResult.put(frag, inters);
-
-			i++;
-			if (i == 2)
-				break;
 		}
 
 		TEIGenerator teiGenerator = new TEIGenerator();
@@ -262,6 +284,58 @@ public class AdminController {
 
 		model.addAttribute("generator", teiGenerator);
 		return "admin/generatedTEI";
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = "/tests")
+	public String tests(HttpServletResponse response, Model model) {
+
+		List<Fragment> fragments = new ArrayList<Fragment>(LdoD.getInstance()
+				.getFragmentsSet());
+
+		int size = fragments.size();
+
+		System.out.println("size " + size);
+		// for (int i = 0; i < 1000; i++) {
+		int frag = (int) (Math.random() * size);
+		System.out.println(frag + " ");
+		Fragment fragment = fragments.get(frag);
+
+		List<FragInter> inters = new ArrayList<FragInter>();
+		for (FragInter inter : fragment.getFragmentInterSet()) {
+			if (inter.getSourceType() != EditionType.VIRTUAL) {
+				inters.add(inter);
+			}
+		}
+
+		HtmlWriter2CompInters writer = new HtmlWriter2CompInters(inters);
+		writer.write(true, true);
+
+		Map<FragInter, HtmlWriter4Variations> variations = new HashMap<FragInter, HtmlWriter4Variations>();
+		for (FragInter inter : inters) {
+			variations.put(inter, new HtmlWriter4Variations(inter));
+		}
+
+		List<AppText> apps = new ArrayList<AppText>();
+		for (TextPortion text : inters.get(0).getFragment().getTextPortion()
+				.getChildTextSet()) {
+			text.putAppTextWithVariations(apps, inters);
+		}
+
+		Collections.reverse(apps);
+
+		model.addAttribute("ldoD", LdoD.getInstance());
+		model.addAttribute("user", LdoDUser.getUser());
+		model.addAttribute("fragment", fragment);
+		model.addAttribute("inters", inters);
+
+		model.addAttribute("lineByLine", true);
+		model.addAttribute("writer", writer);
+		model.addAttribute("variations", variations);
+		model.addAttribute("apps", apps);
+
+		return "fragment/main";
+
+		// }
 	}
 
 }

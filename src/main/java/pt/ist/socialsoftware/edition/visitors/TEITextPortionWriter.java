@@ -1,6 +1,3 @@
-/**
- * 
- */
 package pt.ist.socialsoftware.edition.visitors;
 
 import java.util.Set;
@@ -72,10 +69,11 @@ public class TEITextPortionWriter implements TextTreeVisitor {
 		// TODO Auto-generated constructor stub
 		this.rootElement = rootElement;
 		this.fragInterSelectedList = fragInterSelectedList;
+		this.xmlns = Namespace.getNamespace("http://www.tei-c.org/ns/1.0");
 	}
 
 	private Element preGenerate(String name) {
-		Element newElement = new Element(name);
+		Element newElement = new Element(name, xmlns);
 		rootElement.addContent(newElement);
 		rootElement = newElement;
 		return newElement;
@@ -96,7 +94,7 @@ public class TEITextPortionWriter implements TextTreeVisitor {
 			firstChild.accept(this);
 		}
 
-		if (!appText.getType().getDesc().equals("UNSPECIFIED")) {
+		if (!appText.getType().getDesc().equalsIgnoreCase("UNSPECIFIED")) {
 			Attribute typeAtt = new Attribute("type", appText.getType()
 					.getDesc());
 			rootElement.setAttribute(typeAtt);
@@ -117,6 +115,14 @@ public class TEITextPortionWriter implements TextTreeVisitor {
 		result = result + "<rdgGrp>";
 
 		preGenerate("rdgGrp");
+
+		if (rdgGrpText.getType() != null) {
+			if (rdgGrpText.getType().getDesc().compareTo("unspecified") != 0) {
+				Attribute typeAtt = new Attribute("type", rdgGrpText.getType()
+						.getDesc());
+				rootElement.setAttribute(typeAtt);
+			}
+		}
 
 		TextPortion firstChild = rdgGrpText.getFirstChildText();
 		if (firstChild != null) {
@@ -211,6 +217,12 @@ public class TEITextPortionWriter implements TextTreeVisitor {
 
 		} else {
 			result = result + "<seg>";
+		}
+
+		if (segText.getXmlId() != null) {
+			Attribute ids = new Attribute("id", segText.getXmlId(),
+					Namespace.XML_NAMESPACE);
+			rootElement.setAttribute(ids);
 		}
 
 		TextPortion firstChild = segText.getFirstChildText();
@@ -421,9 +433,20 @@ public class TEITextPortionWriter implements TextTreeVisitor {
 	public void visit(GapText gapText) {
 
 		preGenerate("gap");
-		result = result + "<gap reason=\">" + gapText.getReason().getDesc()
+
+		result = result + "<gap reason=\"" + gapText.getReason().getDesc()
 				+ "\" extent=\"" + gapText.getExtent() + "\" unit=\""
 				+ gapText.getUnit().getDesc() + "\"/>";
+
+		Attribute reasonAtt = new Attribute("reason", gapText.getReason()
+				.getDesc());
+		Attribute extentAtt = new Attribute("extent", String.valueOf(gapText
+				.getExtent()));
+		Attribute unitAtt = new Attribute("unit", gapText.getUnit().getDesc());
+
+		rootElement.setAttribute(reasonAtt);
+		rootElement.setAttribute(extentAtt);
+		rootElement.setAttribute(unitAtt);
 
 		rootElement = rootElement.getParentElement();
 
@@ -439,6 +462,10 @@ public class TEITextPortionWriter implements TextTreeVisitor {
 		preGenerate("unclear");
 		result = result + "<unclear reason=\">"
 				+ unclearText.getReason().getDesc() + "\">";
+
+		Attribute reasonAtt = new Attribute("reason", unclearText.getReason()
+				.getDesc());
+		rootElement.setAttribute(reasonAtt);
 
 		TextPortion firstChild = unclearText.getFirstChildText();
 		if (firstChild != null) {
@@ -457,15 +484,28 @@ public class TEITextPortionWriter implements TextTreeVisitor {
 	public void visit(AltText altText) {
 		String valueTarget = "";
 		String valueWeight = "";
+
 		for (AltTextWeight weight : altText.getAltTextWeightSet()) {
-			valueTarget = valueTarget + "#" + weight.getSegText().getXmlId();
+			valueTarget = valueTarget + "#" + weight.getSegText().getXmlId()
+					+ " ";
 			valueWeight = valueWeight + " " + weight.getWeight();
 		}
+
+		valueTarget = valueTarget.trim();
+		valueWeight = valueWeight.trim();
 
 		preGenerate("alt");
 		result = result + "<alt target=\"" + valueTarget + "\"" + " mode=\""
 				+ altText.getMode().getDesc() + "\" weights=\"" + valueWeight
 				+ "\"/>";
+
+		Attribute targetAtt = new Attribute("target", valueTarget);
+		Attribute modeAtt = new Attribute("mode", altText.getMode().getDesc());
+		Attribute weightsAtt = new Attribute("weights", valueWeight);
+
+		rootElement.setAttribute(targetAtt);
+		rootElement.setAttribute(modeAtt);
+		rootElement.setAttribute(weightsAtt);
 
 		rootElement = rootElement.getParentElement();
 
@@ -478,8 +518,12 @@ public class TEITextPortionWriter implements TextTreeVisitor {
 	public void visit(NoteText noteText) {
 
 		preGenerate("note");
+
 		result = result + "<note type=\"" + noteText.getType().getDesc()
 				+ "\">";
+
+		Attribute typeAtt = new Attribute("type", noteText.getType().getDesc());
+		rootElement.setAttribute(typeAtt);
 
 		TextPortion firstChild = noteText.getFirstChildText();
 		if (firstChild != null) {
@@ -497,9 +541,16 @@ public class TEITextPortionWriter implements TextTreeVisitor {
 	@Override
 	public void visit(RefText refText) {
 
-		preGenerate("note");
+		preGenerate("ref");
+
 		result = result + "<note type=\"" + refText.getType().getDesc() + "\" "
 				+ "target=\"#" + refText.getTarget() + "\">";
+
+		Attribute typeAtt = new Attribute("type", refText.getType().getDesc());
+		Attribute targetAtt = new Attribute("target", "#" + refText.getTarget());
+
+		rootElement.setAttribute(typeAtt);
+		rootElement.setAttribute(targetAtt);
 
 		TextPortion firstChild = refText.getFirstChildText();
 		if (firstChild != null) {
