@@ -1,6 +1,9 @@
 package pt.ist.socialsoftware.edition.reading.controller;
 
+<<<<<<< Updated upstream:edition-reading/src/main/java/pt/ist/socialsoftware/edition/reading/controller/ReadingController.java
 import java.util.Set;
+=======
+>>>>>>> Stashed changes:reading/src/main/java/pt/ist/socialsoftware/edition/reading/controller/ReadingController.java
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+<<<<<<< Updated upstream:edition-reading/src/main/java/pt/ist/socialsoftware/edition/reading/controller/ReadingController.java
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +28,16 @@ import pt.ist.socialsoftware.edition.core.domain.LdoD;
 import pt.ist.socialsoftware.edition.core.generators.PlainHtmlWriter4OneInter;
 import pt.ist.socialsoftware.edition.core.session.LdoDSession;
 import pt.ist.socialsoftware.edition.core.shared.exception.LdoDException;
+=======
+import org.springframework.web.bind.annotation.*;
+import pt.ist.fenixframework.FenixFramework;
+import pt.ist.socialsoftware.edition.core.domain.*;
+import pt.ist.socialsoftware.edition.core.generators.PlainHtmlWriter4OneInter;
+import pt.ist.socialsoftware.edition.core.session.LdoDSession;
+import pt.ist.socialsoftware.edition.core.shared.exception.LdoDException;
+
+import java.util.Set;
+>>>>>>> Stashed changes:reading/src/main/java/pt/ist/socialsoftware/edition/reading/controller/ReadingController.java
 
 @Controller
 @SessionAttributes({ "ldoDSession" })
@@ -171,7 +185,7 @@ public class ReadingController {
 
 	@RequestMapping(method = RequestMethod.POST, value = "/weight", produces = "application/json")
 	public ResponseEntity<String> changeWeight(Model model, @ModelAttribute("ldoDSession") LdoDSession ldoDSession,
-			@RequestParam String type, @RequestParam double value) {
+											   @RequestParam String type, @RequestParam double value) {
 
 		switch (type) {
 		case "heteronym":
