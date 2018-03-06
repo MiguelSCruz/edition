@@ -21,6 +21,7 @@ public class AboutController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/archive")
 	public String showArchive() {
+		logger.debug("showArchive");
 		return "about/archive-main";
 	}
 

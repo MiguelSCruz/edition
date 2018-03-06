@@ -11,7 +11,12 @@
 
 
 	<artifactId>edition-reading</artifactId>
-	<packaging>war</packaging>
+
+	<properties>
+		<p.type>jar</p.type>
+	</properties>
+	<packaging>${p.type}</packaging>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -28,10 +33,9 @@
 	<dependencies>
 		<!-- Services -->
 		<dependency>
-			<groupId>pt.ist.socialsoftware.edition</groupId>
+			<groupId>pt.ist.socialsoftware</groupId>
 			<artifactId>edition-core</artifactId>
 			<version>1.0</version>
-			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 

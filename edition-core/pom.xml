@@ -11,9 +11,25 @@
 
 
 	<artifactId>edition-core</artifactId>
-	<packaging>war</packaging>
-	
+	<properties>
+		<p.type>jar</p.type>
+	</properties>
+	<packaging>${p.type}</packaging>
+
 	<build>
+		<resources>
+			<resource>
+				<targetPath>META-INF/resources</targetPath>
+				<directory>src/main/webapp/resources</directory>
+			</resource>
+			<resource>
+				<targetPath>META-INF/resources/WEB-INF</targetPath>
+				<directory>src/main/webapp/WEB-INF</directory>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -25,5 +41,6 @@
 			</plugin>
 		</plugins>
 	</build>
+
 
 </project>
