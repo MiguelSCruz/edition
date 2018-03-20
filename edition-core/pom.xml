@@ -1,46 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>pt.ist.socialsoftware</groupId>
-		<artifactId>edition</artifactId>
- 		<version>1.0</version>
-	</parent>
+    <parent>
+        <groupId>pt.ist.socialsoftware</groupId>
+        <artifactId>edition</artifactId>
+        <version>1.0</version>
+    </parent>
 
 
-	<artifactId>edition-core</artifactId>
-	<properties>
-		<p.type>jar</p.type>
-	</properties>
-	<packaging>${p.type}</packaging>
+    <artifactId>edition-core</artifactId>
+    <packaging>${p.type}</packaging>
 
-	<build>
-		<resources>
-			<resource>
-				<targetPath>META-INF/resources</targetPath>
-				<directory>src/main/webapp/resources</directory>
-			</resource>
-			<resource>
-				<targetPath>META-INF/resources/WEB-INF</targetPath>
-				<directory>src/main/webapp/WEB-INF</directory>
-			</resource>
-			<resource>
-				<directory>src/main/resources</directory>
-			</resource>
-		</resources>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>pt.ist</groupId>
-				<artifactId>ff-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+    <profiles>
+        <profile>
+            <id>jar</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <p.type>jar</p.type>
+            </properties>
+            <build>
+                <resources>
+                    <resource>
+                        <targetPath>META-INF/resources</targetPath>
+                        <directory>src/main/webapp/resources</directory>
+                    </resource>
+                    <resource>
+                        <targetPath>META-INF/resources/WEB-INF</targetPath>
+                        <directory>src/main/webapp/WEB-INF</directory>
+                    </resource>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                    </resource>
+                </resources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>pt.ist</groupId>
+                        <artifactId>ff-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>war</id>
+            <properties>
+                <p.type>war</p.type>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>pt.ist</groupId>
+                        <artifactId>ff-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 
 </project>
