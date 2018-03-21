@@ -1,3 +1,6 @@
+<%@ include file="/WEB-INF/jsp/common/tags-head.jsp"%>
+
+
 <body class="">
 
 	<div class="container">

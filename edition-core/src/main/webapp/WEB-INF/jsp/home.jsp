@@ -1,46 +1,6 @@
+<%@ include file="/WEB-INF/jsp/common/tags-head.jsp"%>
+
 <body class="ldod-default">
-	<!--<div class="container">
-		<div class="jumbotron">
-			<h1>Arquivo LdoD</h1>
-			<hr>
-			<p>Arquivo Digital Colaborativo do Livro do Desassossego</p>
-			<br> <br>
-			<p class="text-right text-info">
-				<strong>Versão BETA - Prot�tipo em desenvolvimento</strong><br>
-				<span>Social Edition - LdoD</span> by <span>CLP / FLUC / UC
-					and ESW / INESC-ID / IST</span><br> <span>Nenhum Problema Tem
-					Solu��o Project</span><br> Licensed under a <a
-					href="http://www.freebsd.org/copyright/freebsd-license.html">FreeBSD</a>
-				License
-			</p>
-		</div>
-		<div class="panel-footer">
-			<div class="row">
-				<div class="col-md-5">
-					<img src="/resources/img/2015_FCT_V_color.jpg"
-						class="img-responsive" alt="Responsive image">
-				</div>
-				<div class="col-md-7">
-					<img src="/resources/img/Fundo_Br_Logos_Cor.jpg"
-						class="img-responsive" alt="Responsive image">
-				</div>
-			</div>
-			<div class="row">
-				<small>Arquivo digital desenvolvido no �mbito do projeto de
-					investiga��o 'Nenhum Problema Tem Solu��o: Um Arquivo Digital do
-					Livro do Desassossego' (PTDC/CLE-LLI/118713/2010). Projeto pela
-					financiado pela FCT - Funda��o para a Ci�ncia e a Tecnologia e
-					cofinanciado pelo Fundo Europeu de Desenvolvimento Regional
-					(FEDER), atrav�s do Eixo I do Programa Operacional Fatores de
-					Competitividade (POFC) do QREN - Uni�o Europeia, COMPETE:
-					FCOMP-01-0124-FEDER-019715. Financiado ainda por Fundos Nacionais
-					atrav�s da FCT - Funda��o para a Ci�ncia e a Tecnologia no �mbito
-					dos projetos "Financiamento Plurianual - Unidade 759":
-					"PEst-OE/ELT/UI0759/2011", "UID/ELT/00759/2013" e
-					"PEst-OE/ELT/UI0759/2014".</smal>
-			</div>
-		</div>
-	</div>-->
 
 	<% 
 	  	int img1 = (int) (Math.random() * 2)+1;
@@ -54,20 +14,20 @@
 	  	//{{"BNP/E3","E eu offere�o-te este livro porque sei que elle � bello e inutil.","9-39, 9-41, 9-31","Fr449/inter/Fr449_WIT_MS_Fr449a_000"},
 
 
-String [][] excerpts =  {{"Jerónimo Pizarro","E eu offere�o-te este livro porque sei que elle � bello e inutil.","17","Fr449/inter/Fr449_WIT_ED_CRIT_P"},
+String [][] excerpts =  {{"Jerónimo Pizarro","E eu offereço-te este livro porque sei que elle é bello e inutil.","17","Fr449/inter/Fr449_WIT_ED_CRIT_P"},
 {"Jacinto do Prado Coelho","Senti-me agora respirar como se houvesse practicado uma cousa nova, ou atrazada.","188","Fr157/inter/Fr157_WIT_ED_CRIT_C"},
-{"Teresa Sobral Cunha","Em mim foi sempre menor a intensidade das sensa��es que a intensidade da sensação delas.","283","Fr309/inter/Fr309_WIT_ED_CRIT_SC"},
-{"Richard Zenith","O sil�ncio que sai do som da chuva espalha-se, num crescendo de monotonia cinzenta, pela rua estreita que fito.","41","Fr175/inter/Fr175_WIT_ED_CRIT_Z"},
+{"Teresa Sobral Cunha","Em mim foi sempre menor a intensidade das sensações que a intensidade da sensação delas.","283","Fr309/inter/Fr309_WIT_ED_CRIT_SC"},
+{"Richard Zenith","O silêncio que sai do som da chuva espalha-se, num crescendo de monotonia cinzenta, pela rua estreita que fito.","41","Fr175/inter/Fr175_WIT_ED_CRIT_Z"},
 {"Jerónimo Pizarro","A grande terra, que serve os mortos, serviria, menos maternalmente, esses papeis.","387","Fr159.b/inter/Fr159_b_WIT_ED_CRIT_P_1"},
 {"Teresa Sobral Cunha","Em cada pingo de chuva a minha vida falhada chora na natureza.","266","Fr390/inter/Fr390_WIT_ED_CRIT_SC"}, 
 {"Jacinto do Prado Coelho","Como nos dias em que a trovoada se prepara e os ruidos da rua fallam alto com uma voz solitária.","45","Fr042/inter/Fr042_WIT_ED_CRIT_C"},
 {"Teresa Sobral Cunha","Ninguém estava quem era, e o patrão Vasques apareceu à porta do gabinete para pensar em dizer qualquer coisa.","441","Fr043/inter/Fr043_WIT_ED_CRIT_SC"},
-{"Richard Zenith","'Vem a� uma grande trovoada', disse o Moreira, e voltou a p�gina do Raz�o.","183","Fr044/inter/Fr044_WIT_ED_CRIT_Z"},
-{"Jerónimo Pizarro","E então, em plena vida, � que o sonho tem grandes cinemas.","262","Fr149/inter/Fr149_WIT_ED_CRIT_P"},
-{"Jerónimo Pizarro","L�r � sonhar pela mão de outrem.","586","Fr554/inter/Fr554_WIT_ED_CRIT_P"},
-{"Jacinto do Prado Coelho","Devo ao ser guarda-livros grande parte do que posso sentir e pensar como a nega��o e a fuga do cargo.","133","Fr198/inter/Fr198_WIT_ED_CRIT_C"},
+{"Richard Zenith","'Vem aí uma grande trovoada', disse o Moreira, e voltou a página do Razão.","183","Fr044/inter/Fr044_WIT_ED_CRIT_Z"},
+{"Jerónimo Pizarro","E então, em plena vida, é que o sonho tem grandes cinemas.","262","Fr149/inter/Fr149_WIT_ED_CRIT_P"},
+{"Jerónimo Pizarro","L�r é sonhar pela mão de outrem.","586","Fr554/inter/Fr554_WIT_ED_CRIT_P"},
+{"Jacinto do Prado Coelho","Devo ao ser guarda-livros grande parte do que posso sentir e pensar como a negação e a fuga do cargo.","133","Fr198/inter/Fr198_WIT_ED_CRIT_C"},
 {"Teresa Sobral Cunha","Durmo sobre os cotovelos onde o corrimão me doe, e sei de nada como um grande prometimento.","380","Fr030/inter/Fr030_WIT_ED_CRIT_SC"},
-{"Richard Zenith","Sentado à janela, contemplo com os sentidos todos esta coisa nenhuma da vida universal que est� l� fora.","50","Fr118/inter/Fr118_WIT_ED_CRIT_Z"},
+{"Richard Zenith","Sentado à janela, contemplo com os sentidos todos esta coisa nenhuma da vida universal que está lá fora.","50","Fr118/inter/Fr118_WIT_ED_CRIT_Z"},
 {"Jerónimo Pizarro","Já me cansa a rua, mas não, não me cansa � tudo � rua na vida.","284","Fr523/inter/Fr523_WIT_ED_CRIT_P"},
 {"Jacinto do Prado Coelho","Mergulhou na sombra como quem entra na porta onde chega.","485","Fr306a/inter/Fr306a_WIT_ED_CRIT_C"},
 {"Jacinto do Prado Coelho","Para mim os pormenores são coisas, vozes, lettras.","163","Fr255/inter/Fr255_WIT_ED_CRIT_C"},
@@ -77,8 +37,8 @@ String [][] excerpts =  {{"Jerónimo Pizarro","E eu offere�o-te este livro por
 {"Jacinto do Prado Coelho","Minha alma está hoje triste até ao corpo.","167","Fr269/inter/Fr269_WIT_ED_CRIT_C"},
 {"Jacinto do Prado Coelho","Eu não sei quem tu és, mas sei ao certo o que sou?","254","Fr285/inter/Fr285_WIT_ED_CRIT_C"},
 {"Teresa Sobral Cunha","Pasmo sempre quando acabo qualquer coisa.","711","Fr009/inter/Fr009_WIT_ED_CRIT_SC"},
-{"Richard Zenith","� uma oleografia sem remédio.","25","Fr010/inter/Fr010_WIT_ED_CRIT_Z"},
-{"Jerónimo Pizarro","Toda a vida � um somno.","197","Fr027/inter/Fr027_WIT_ED_CRIT_P"},
+{"Richard Zenith","É uma oleografia sem remédio.","25","Fr010/inter/Fr010_WIT_ED_CRIT_Z"},
+{"Jerónimo Pizarro","Toda a vida é um somno.","197","Fr027/inter/Fr027_WIT_ED_CRIT_P"},
 {"Richard Zenith","Não consegui nunca ver-me de fora.","338","Fr028/inter/Fr028_WIT_ED_CRIT_Z"},
 {"Jacinto do Prado Coelho","Jogar às escondidas com a nossa consciencia de viver.","370","Fr437/inter/Fr437_WIT_ED_CRIT_C"},
 {"Teresa Sobral Cunha","A arte livra-nos ilusoriamente da sordidez de sermos.","456","Fr163/inter/Fr163_WIT_ED_CRIT_SC"},
@@ -110,11 +70,11 @@ String [][] excerpts =  {{"Jerónimo Pizarro","E eu offere�o-te este livro por
 		<c:choose>
 		<c:when test="${pageContext.response.locale.language.equalsIgnoreCase('pt')}">
 			<p>
-		      O Arquivo LdoD � um arquivo digital colaborativo do <span class="s-ws">Livro do Desassossego</span> de <span class="s-ws">Fernando Pessoa</span>.
-		      Cont�m <span class="s-underl">imagens</span> dos documentos aut�grafos, <span class="s-underl">novas transcri��es</span>
-		      desses documentos e ainda transcri��es de <span class="s-underl">quatro edi��es da obra</span>.
-		      Al�m da <span class="s-underl">leitura</span> e <span class="s-underl">compara��o</span> das transcri��es, o Arquivo LdoD permite que os
-		      utilizadores colaborem na cria��o de <span class="s-underl">edi��es virtuais</span> do Livro do Desassossego.
+		      O Arquivo LdoD é um arquivo digital colaborativo do <span class="s-ws">Livro do Desassossego</span> de <span class="s-ws">Fernando Pessoa</span>.
+		      Contém <span class="s-underl">imagens</span> dos documentos autógrafos, <span class="s-underl">novas transcrições</span>
+		      desses documentos e ainda transcrições de <span class="s-underl">quatro edi��es da obra</span>.
+		      Além da <span class="s-underl">leitura</span> e <span class="s-underl">comparação</span> das transcrições, o Arquivo LdoD permite que os
+		      utilizadores colaborem na criação de <span class="s-underl">edições virtuais</span> do Livro do Desassossego.
 		    </p>
 		</c:when>
 			<c:when test="${pageContext.response.locale.language.equalsIgnoreCase('en')}">
